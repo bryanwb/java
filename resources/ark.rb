@@ -19,7 +19,11 @@
 
 actions :install, :remove
 
-attribute :url, :regex => /^http:\/\/.*(tar.gz|bin|zip)$/, :default => nil
+#attribute :url, :regex => /^http:\/\/.*(tar.gz|bin|zip)$/, :default => nil # web-resource only
+attribute :url, :regex => /^(http:\/|\/.*)\/.*(tar.gz|bin|zip)$/, :default => nil # web-resource + local absolute file-path
+# Unfortunately allows URLs like http://ww.zip
+# Will not allow /mnt or /ww.zip but /mnt/ww.zip is ok
+
 attribute :mirrorlist, :kind_of => Array, :default => nil
 attribute :checksum, :regex => /^[a-zA-Z0-9]{64}$/, :default => nil
 attribute :app_home, :kind_of => String, :default => nil

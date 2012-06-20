@@ -55,7 +55,8 @@ action :install do
     require 'fileutils'
     
     unless ::File.exists?(app_root)
-      FileUtils.mkdir app_root, :mode => new_resource.app_home_mode
+      #FileUtils.mkdir app_root, :mode => new_resource.app_home_mode
+      FileUtils.mkdir_p app_root, :mode => new_resource.app_home_mode
       FileUtils.chown new_resource.owner, new_resource.owner, app_root
     end
 
