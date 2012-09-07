@@ -1,3 +1,14 @@
+platform :centos do
+  version "6.3" do
+    box "opscode-centos-6.3"
+    box_url "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-centos-6.3.box"
+  end
+  version "6.3-i386" do
+    box "centos6_3_32"
+    box_url "https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-centos-6.3-i386.box"
+  end
+end
+
 cookbook "java" do
   configuration("openjdk"){ runtimes [] }
   configuration("oracle"){
