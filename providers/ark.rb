@@ -105,6 +105,7 @@ action :install do
     tmpdir = Dir.mktmpdir
     case tarball_name
     when /^.*\.bin/
+      Chef::Log.debug("Extracting #{tarball_name} to #{tmpdir}")
       cmd = Chef::ShellOut.new(
                                %Q[ cd "#{tmpdir}";
                                    cp "#{Chef::Config[:file_cache_path]}/#{tarball_name}" . ;
@@ -129,18 +130,23 @@ action :install do
       end
     end
 
-    cmd = Chef::ShellOut.new(
+    if not ( tarball_name =~ /^.*rpm\.bin/ )
+       Chef::Log.debug("mv #{tmpdir}/#{app_dir_name} to #{app_dir}")
+       cmd = Chef::ShellOut.new(
                        %Q[ mv "#{tmpdir}/#{app_dir_name}" "#{app_dir}" ]
                              ).run_command
-    unless cmd.exitstatus == 0
-        Chef::Application.fatal!(%Q[ Command \' mv "#{tmpdir}/#{app_dir_name}" "#{app_dir}" \' failed ])
-      end
+        unless cmd.exitstatus == 0
+            Chef::Application.fatal!(%Q[ Command \' mv "#{tmpdir}/#{app_dir_name}" "#{app_dir}" \' failed ])
+        end
+    end
+
     FileUtils.rm_r tmpdir
     new_resource.updated_by_last_action(true)
   end
 
-  #update-alternatives
-  if new_resource.default
+  if not ( tarball_name =~ /^.*rpm\.bin/ )
+    #update-alternatives
+    if new_resource.default
     Chef::Log.debug "app_home is #{app_home} and app_dir is #{app_dir}"
     current_link = ::File.symlink?(app_home) ? ::File.readlink(app_home) : nil
     if current_link != app_dir
@@ -166,6 +172,7 @@ action :install do
           end
         end
       end
+    end
     end
   end
 end
